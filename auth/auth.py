@@ -17,7 +17,7 @@ def login_option():
       while(not passwd_correct(password, login)):
         passwd_attempts -= 1
         messages['PASSWD_WRONG'](passwd_attempts)
-        if not passwd_attempts: return False
+        if not passwd_attempts: return None
         password = getpass()
       break
     return users.get_user(login)
@@ -25,7 +25,7 @@ def login_option():
 def register_option():
   if not new_users_available():
     messages['NEW_USERS_UNAVAILABLE']()
-    return False
+    return None
   while True:
     login = input('New login: ')
     while(not validate_login_len(login) or login_exists(login)):
@@ -44,16 +44,12 @@ def register_option():
 
 def login():
   commands = {
-    "login": login_option,
-    "register": register_option,
-    "exit": lambda: None
+    'login': login_option,
+    'register': register_option,
+    'exit': lambda: None
   }
-  print("Welcome to the system. Please register or login.")
-  print("Options: register | login | exit")
+  messages['WELCOME'](commands.keys())
   while True:
     option = input("> ")
-    if option in commands:
-      result = commands[option]()
-      if result is None: break
-      else: return result
+    if option in commands: return commands[option]()
     else: messages['UNKNOWN_OPTION'](option)

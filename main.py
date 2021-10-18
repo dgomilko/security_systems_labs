@@ -8,7 +8,7 @@ def main():
   check_disk()
   signal(SIGINT, logout)
   user = login()
-  init_session(user)
+  init_session(user) if user is not None else logout(None, None)
 
 if __name__ == "__main__":
   main() 

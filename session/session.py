@@ -28,7 +28,9 @@ def init_session(user):
       continue
     cmd_res = None
     try: cmd_res = exec_command(cmd, user.admin, cur_path)
-    except FileNotFoundError: messages['NOT_FOUND']()
+    except FileNotFoundError:
+      messages['NOT_FOUND']()
+      continue
     if cmd.split()[0] == 'cd' and cmd_res.returncode == 0:
       split_path = cur_path.split('/')
       cur_path = '/'.join(split_path[:-1]) if cmd_last_arg == '..' else f'{cur_path}/{cmd_last_arg}'

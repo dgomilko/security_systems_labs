@@ -3,6 +3,9 @@ sys.path.append('../')
 from system_stats import MIN_USER_PASSWD_LEN
 
 messages = {
+  'WELCOME':
+    lambda options: (print('Welcome to the system. Please register or login.' +
+      f'\nOptions: {" | ".join(options)}')),
   'BLANK_LOGIN':
     lambda: print('Login cannot be blank. Please, try again'),
   'LOGIN_DOESNT_EXIST':
