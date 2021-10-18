@@ -22,18 +22,21 @@ def init_session(user):
     cmd_last_arg = cmd.split()[-1]
     if (
       cmd_name in ('cd', 'ls') and
-      cmd_last_arg.startswith('..') and cur_path == DISK_NAME
+      cmd_last_arg.startswith('..')
     ):
-      messages['NO_PARENT_DIR']()
-      continue
+      if len(cmd_last_arg.split('/')) >= len(cur_path.split('/')):
+        messages['NO_PARENT_DIR']()
+        continue
     cmd_res = None
     try: cmd_res = exec_command(cmd, user.admin, cur_path)
     except FileNotFoundError:
       messages['NOT_FOUND']()
       continue
-    if cmd.split()[0] == 'cd' and cmd_res.returncode == 0:
-      split_path = cur_path.split('/')
-      cur_path = '/'.join(split_path[:-1]) if cmd_last_arg == '..' else f'{cur_path}/{cmd_last_arg}'
+    if cmd_name == 'cd' and cmd_res.returncode == 0:
+      if cmd_last_arg.startswith('..'):
+        step = len(cmd_last_arg.split('/'))
+        cur_path = '/'.join(cur_path.split('/')[:-step])
+      else: cur_path = f'{cur_path}/{cmd_last_arg}'
     is_err = cmd_res.returncode != 0
     permission_err = 'Permission denied' in cmd_res.stderr.decode("utf-8")
     if is_err and permission_err: messages['NO_PERMISSION']()
