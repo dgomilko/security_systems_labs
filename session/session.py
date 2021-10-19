@@ -1,14 +1,17 @@
 from disk_access_utils.directory_manager import grant_access, check_disk
 from disk_access_utils.user_manager import exec_command
 from session.messages import messages
+from termios import tcflush, TCIFLUSH
+import os
 import sys
 sys.path.append('../')
 from system_stats import DISK_NAME
 
-def logout(signum, frame):
+def logout(signum=None, frame=None):
   messages['LOGOUT']()
   check_disk()
-  exit(1)
+  tcflush(sys.stdin, TCIFLUSH)
+  os._exit(0)
 
 def init_session(user):
   grant_access(user)
@@ -17,7 +20,7 @@ def init_session(user):
     cmd = input(f'{user.login}@{cur_path} > ')
     if cmd == 'logout':
       user.signed_in = False
-      logout(None, None)
+      logout()
     cmd_name = cmd.split()[0]
     cmd_last_arg = cmd.split()[-1]
     if (

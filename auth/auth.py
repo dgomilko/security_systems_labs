@@ -50,6 +50,6 @@ def login():
   }
   messages['WELCOME'](commands.keys())
   while True:
-    option = input("> ")
+    option = input('> ')
     if option in commands: return commands[option]()
     else: messages['UNKNOWN_OPTION'](option)

@@ -8,3 +8,4 @@ ALL_SUBDISKS = ['A', 'B', 'C', 'D', 'E']
 PERMITTED_SUBDISKS = ['A', 'E']
 USER_PERMISSIONS = stat.S_IRWXO | stat.S_IRWXG
 OS_USERNAME = 'file_system_user_account'
+SESSION_TIMEOUT_SEC = 180
