@@ -14,9 +14,7 @@ def chmod_if_not_equal(path, mode):
 
 def chown_if_not_equal(path, uid, gid):
   cur_owner = pwd.getpwuid(os.stat(path).st_uid).pw_uid
-  if cur_owner != uid: 
-    print("dd")
-    os.chown(path, uid, gid)
+  if cur_owner != uid: os.chown(path, uid, gid)
 
 def check_disk():
   min_permissions = 0o42000
