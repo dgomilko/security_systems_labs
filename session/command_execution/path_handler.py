@@ -30,5 +30,4 @@ def target_root_dir(cmd, path):
   return (
     ((len(split_cmd) == 1 or no_dir_arg) and path == DISK_NAME) or
     is_root_dir(path, split_cmd[-1])
-  ) 
-  
+  )
