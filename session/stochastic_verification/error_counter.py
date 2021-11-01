@@ -37,4 +37,4 @@ def rm_user(idx):
   with open(ERRORS_COUNTER, "w") as f:
     for i, line in enumerate(lines):
       if i != idx: f.write(line)
-  
+         
