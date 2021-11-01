@@ -1,8 +1,6 @@
 import os
 import stat
 import pwd
-import sys
-sys.path.append('../')
 from system_stats import DISK_NAME, USER_PERMISSIONS, ALL_SUBDISKS, PERMITTED_SUBDISKS
 
 def create_dir_if_does_not_exist(path):
@@ -35,4 +33,3 @@ def grant_access(user):
     for subdisk in PERMITTED_SUBDISKS:
       path = f'{DISK_NAME}/{subdisk}'
       chmod_if_not_equal(path, USER_PERMISSIONS)
-  user.signed_in = True

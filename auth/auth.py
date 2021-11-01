@@ -1,48 +1,14 @@
-from getpass import getpass
-from users.system_users import users
-from auth.validators import *
+from users import journal_manager
 from auth.messages import messages
-
-def login_option():
-    while True:
-      login = input('Login: ')
-      while(not validate_login_len(login) or not login_exists(login)):
-        if not validate_login_len(login): messages['BLANK_LOGIN']()
-        else: messages['LOGIN_DOESNT_EXIST']()
-        login = input('Login: ')
-      break
-    passwd_attempts = 3
-    while True:
-      password = getpass()
-      while(not passwd_correct(password, login)):
-        passwd_attempts -= 1
-        messages['PASSWD_WRONG'](passwd_attempts)
-        if not passwd_attempts: return None
-        password = getpass()
-      break
-    return users.get_user(login)
-
-def register_option():
-  if not new_users_available():
-    messages['NEW_USERS_UNAVAILABLE']()
-    return None
-  while True:
-    login = input('New login: ')
-    while(not validate_login_len(login) or login_exists(login)):
-      if not validate_login_len(login): messages['BLANK_LOGIN']()
-      else: messages['LOGIN_EXISTS']()
-      login = input('New login: ')
-    break
-  while True:
-    password = getpass()
-    while(not validate_passwd_len(password)):
-      messages['PASSWD_LEN']()
-      password = getpass()
-    break
-  user = users.add_new_user(login, password)
-  return user
+from auth.validators import *
+from auth.options import login_option, register_option
+from utils.wrapped_input import wrapped_input
 
 def login():
+  journal_parse_err = journal_manager.check_users_data_files()
+  if journal_parse_err is not None:
+    messages['CORRUPTED_FILES'](journal_parse_err)
+    return None
   commands = {
     'login': login_option,
     'register': register_option,
@@ -50,6 +16,6 @@ def login():
   }
   messages['WELCOME'](commands.keys())
   while True:
-    option = input('> ')
+    option = wrapped_input('> ')
     if option in commands: return commands[option]()
     else: messages['UNKNOWN_OPTION'](option)

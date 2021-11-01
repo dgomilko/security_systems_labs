@@ -1,9 +1,9 @@
 from signal import signal, SIGINT
-from disk_access_utils.directory_manager import check_disk
 from auth.auth import login
-from session.session import init_session, logout
-from disk_access_utils.user_manager import *
-from inactivity_logout import on_exit_delayed
+from session.session import init_session
+from utils.directory_manager import check_disk
+from utils.logout import logout
+from utils.inactivity_logout import on_exit_delayed
 import keyboard
 
 def main():

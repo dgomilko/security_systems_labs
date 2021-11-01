@@ -1,47 +1,47 @@
-from disk_access_utils.directory_manager import grant_access, check_disk
-from disk_access_utils.user_manager import exec_command
-from session.messages import messages
-from termios import tcflush, TCIFLUSH
 import os
-import sys
-sys.path.append('../')
-from system_stats import DISK_NAME
+import time
+import threading
+from session.command_execution.commands import handle_cmd
+from session.stochastic_verification.verify import *
+from utils.directory_manager import grant_access
+from utils.logout import logout
+from utils.wrapped_input import wrapped_input
+from system_stats import DISK_NAME, QUESTIONS_INTERVAL_MIN
 
-def logout(signum=None, frame=None):
-  messages['LOGOUT']()
-  check_disk()
-  tcflush(sys.stdin, TCIFLUSH)
-  os._exit(0)
+ASK = False
+ANSWER = ''
+NOT_ANSWERED = False
+
+def question(user):
+  global ASK, ANSWER, NOT_ANSWERED
+  while True:
+    time.sleep(QUESTIONS_INTERVAL_MIN * 60)
+    if NOT_ANSWERED:
+      handle_no_answer(user)
+      logout()
+    ASK = True
+    ANSWER = ask(user)
+    NOT_ANSWERED = True
 
 def init_session(user):
   grant_access(user)
   cur_path = DISK_NAME
+  intercepted_commands = {
+    'whoami': lambda: print(user.login),
+    'pwd': lambda: print(cur_path),
+    'clear': lambda: os.system('clear'),
+    'logout': logout
+  }
+  global ASK, ANSWER, NOT_ANSWERED
+  t = threading.Thread(target=question, args=(user,))
+  t.start()
   while True:
-    cmd = input(f'{user.login}@{cur_path} > ')
-    if cmd == 'logout':
-      user.signed_in = False
-      logout()
-    cmd_name = cmd.split()[0]
-    cmd_last_arg = cmd.split()[-1]
-    if (
-      cmd_name in ('cd', 'ls') and
-      cmd_last_arg.startswith('..')
-    ):
-      if len(cmd_last_arg.split('/')) >= len(cur_path.split('/')):
-        messages['NO_PARENT_DIR']()
-        continue
-    cmd_res = None
-    try: cmd_res = exec_command(cmd, user.admin, cur_path)
-    except FileNotFoundError:
-      messages['NOT_FOUND']()
-      continue
-    if cmd_name == 'cd' and cmd_res.returncode == 0:
-      if cmd_last_arg.startswith('..'):
-        step = len(cmd_last_arg.split('/'))
-        cur_path = '/'.join(cur_path.split('/')[:-step])
-      else: cur_path = f'{cur_path}/{cmd_last_arg}'
-    is_err = cmd_res.returncode != 0
-    permission_err = 'Permission denied' in cmd_res.stderr.decode("utf-8")
-    if is_err and permission_err: messages['NO_PERMISSION']()
-    elif is_err: print(cmd_res.stderr.decode("utf-8")[:-1])
-    else: print(cmd_res.stdout.decode("utf-8")[:-1])
+    inp = wrapped_input(f'{user.login}@{cur_path} > ')
+    if ASK:
+      ASK = False
+      NOT_ANSWERED = False
+      verified = verify(user, ANSWER, inp)
+      if not verified: logout()
+    else:
+      cmd_res = handle_cmd(inp, cur_path, user, intercepted_commands)
+      if cmd_res is not None: cur_path = cmd_res

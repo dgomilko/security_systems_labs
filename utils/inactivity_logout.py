@@ -1,6 +1,6 @@
 from threading import Timer
 from system_stats import SESSION_TIMEOUT_SEC
-from session.session import logout
+from utils.logout import logout
 
 t = Timer(SESSION_TIMEOUT_SEC, logout)
 t.start()

@@ -1,8 +1,6 @@
-import sys
 from pwd import getpwnam
 from os import setuid
 from subprocess import run, PIPE
-sys.path.append('../')
 from system_stats import OS_USERNAME
 
 def check_user_exists(username):

@@ -1,0 +1,9 @@
+0 At what age did you get your first pet?
+1 What is your dog's name?
+2 In what city did you grow up in?
+3 What is your primary school best friend's name is?
+4 How many siblings do you have?
+5 What is your favourite flower?
+6 What is your favourite color?
+7 What year did you graduate university?
+8 What is your favourite food?
