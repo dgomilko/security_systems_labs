@@ -11,9 +11,13 @@ from system_stats import QUESTIONS_PER_USER
 def get_passwd():
     while True:
       password = getpass()
-      while(not validate_passwd_len(password) or not validate_spaces(password)):
+      while(not validate_password(password)):
         if not validate_passwd_len(password): messages['PASSWD_LEN']()
-        else: messages['PASSWD_SPACES']()
+        if not validate_spaces(password): messages['PASSWD_SPACES']()
+        if not validate_lowercase(password): messages['PASSWD_NO_LOWERCASE']()
+        if not validate_uppercase(password): messages['PASSWD_NO_UPPERCASE']()
+        if not validate_digit(password): messages['PASSWD_NO_NUM']()
+        if not validate_special_char(password): messages['PASSWD_NO_SPECIAL_CHAR']()
         password = getpass()
       return password
 

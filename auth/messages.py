@@ -36,4 +36,12 @@ messages = {
     lambda: print(f'New password should not be the same as the old one'),
   'PASSWD_CHANGED':
     lambda: print(f'Your password is successfully changed'),
+  'PASSWD_NO_LOWERCASE':
+    lambda: print('Your password does not have a lower case character. Please add at least one'),
+  'PASSWD_NO_UPPERCASE':
+    lambda: print('Your password does not have an upper case character. Please add at least one'),
+  'PASSWD_NO_SPECIAL_CHAR':
+    lambda: print('Your password does not have a valid special character ($!@%^&*#). Please add at least one valid special character'),
+  'PASSWD_NO_NUM':
+    lambda: print('Your password does not have a number. Please add at least one number'),
 }

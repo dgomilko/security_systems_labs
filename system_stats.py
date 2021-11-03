@@ -1,7 +1,7 @@
 import stat
 
 USER_AMOUNT = 5
-MIN_USER_PASSWD_LEN = 3
+MIN_USER_PASSWD_LEN = 4
 MIN_ADMIN_PASSWD_LEN = 2 * MIN_USER_PASSWD_LEN
 DISK_NAME = 'disk'
 ALL_SUBDISKS = ['A', 'B', 'C', 'D', 'E', 'admin']
