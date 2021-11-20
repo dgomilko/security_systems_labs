@@ -1,12 +1,14 @@
 import os
 from getpass import getpass
-from users import journal_manager
+from users.journal_manager import get_user, change_user_passwd, add_user
 from auth.messages import messages
 from auth.validators import *
 from auth.messages import messages
-from utils.passwd_expiration import check_passswd_expired
+from utils.time_manager import check_passswd_expired
 from utils.wrapped_input import wrapped_input
 from system_stats import QUESTIONS_PER_USER
+from monitor.journal_manager import add_level_one_threat
+from encryption.user_keys_manager import check_user_keys_expiration, replace_user_keys
 
 def get_passwd():
     while True:
@@ -44,9 +46,19 @@ def manage_passwd_expiration(user):
       new_passwd = get_passwd()
       if new_passwd == user.password: messages['SAME_PASSWD']()
       else: break
-    user = journal_manager.change_user_passwd(user, new_passwd)
+    user = change_user_passwd(user, new_passwd)
     messages['PASSWD_CHANGED']()
     return user
+
+def manage_keys_expiration(user):
+  while True:
+    answer = input('> ')
+    if answer in ('y', 'yes'):
+      replace_user_keys(user.login)
+      messages['KEYS_CHANGED']()
+      break
+    elif answer in ('n', 'no'): break
+    else: messages['UNKNOWN_OPTION'](answer)
 
 def login_option():
     login = get_login(new=False)
@@ -55,14 +67,18 @@ def login_option():
       password = getpass()
       while(not passwd_correct(password, login)):
         passwd_attempts -= 1
+        add_level_one_threat(login)
         messages['PASSWD_WRONG'](passwd_attempts)
         if not passwd_attempts: return None
         password = getpass()
       break
-    (user, timestamp) = journal_manager.get_user(login)
+    (user, timestamp) = get_user(login)
     if check_passswd_expired(timestamp):
       messages['PASSWD_EXPIRED']()
-      return manage_passwd_expiration(user)
+      user = manage_passwd_expiration(user)
+    if check_user_keys_expiration(login):
+      messages['KEYS_EXPIRED']()
+      manage_keys_expiration(user)
     return user
 
 def get_questions():
@@ -87,7 +103,7 @@ def register_option():
     login = get_login(new=True)
     password = get_passwd()
     questions = get_questions()
-    user, fn = journal_manager.add_user(login, password, questions)
+    user, fn = add_user(login, password, questions)
     messages['REGISTER_COMPLETED'](fn)
     input('')
     os.system('clear')

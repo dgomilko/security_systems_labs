@@ -44,4 +44,8 @@ messages = {
     lambda: print('Your password does not have a valid special character ($!@%^&*#). Please add at least one valid special character'),
   'PASSWD_NO_NUM':
     lambda: print('Your password does not have a number. Please add at least one number'),
+  'KEYS_EXPIRED':
+    lambda: print('Your encryption keyes have expired. Would you like to change them now?'),
+  'KEYS_CHANGED':
+    lambda: print('Your encryption keys are successfully changed'),
 }

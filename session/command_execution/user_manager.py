@@ -20,7 +20,6 @@ def change_os_user():
   setuid(uid)
 
 def exec_command(cmd, is_admin, dir):
-  command = cmd.split()
   fn = None if is_admin else change_os_user
-  res = run(command, stdout=PIPE, stderr=PIPE, preexec_fn=fn, cwd=dir)
+  res = run(cmd, shell=True, stdout=PIPE, stderr=PIPE, preexec_fn=fn, cwd=dir)
   return res

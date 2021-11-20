@@ -1,12 +1,16 @@
-from os.path import abspath
+from os.path import abspath, isfile
 from system_stats import DISK_NAME, PERMITTED_SUBDISKS
 
-def manage_cd_permissions(path, cd_arg):
-  inside_subdir = False
+is_file = lambda path, arg: isfile(f'{path}/{arg}') 
+
+def inside_permitted_dir(path, arg):
   for disk in PERMITTED_SUBDISKS:
-    full_cd_path = abspath(f'{path}/{cd_arg}')
+    full_cd_path = abspath(f'{path}/{arg}')
     parent = abspath(f'{DISK_NAME}/{disk}')
-    if parent in full_cd_path: inside_subdir = True
+    if parent in full_cd_path: return True
+
+def manage_cd_permissions(path, cd_arg):
+  inside_subdir = inside_permitted_dir(path, cd_arg)
   return inside_subdir or is_root_dir(path, cd_arg)
 
 def is_root_dir(path, cmd_arg):
