@@ -68,4 +68,3 @@ def init_session(user):
       (path, permission_err) = cmd_res
       cur_path = path
       if permission_err: add_level_two_threat(user.login)
-

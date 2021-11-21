@@ -6,9 +6,9 @@ from system_stats import REPORT_PATH, MISTAKES_CRITICAL_N
 def init_analyzer():
   no_entries = journal_empty()
   if no_entries: return
-  no_report = not os.path.exists(REPORT_PATH)
-  new_report_needed = no_report
-  if not no_report:
+  report_exists = os.path.exists(REPORT_PATH)
+  new_report_needed = not report_exists
+  if report_exists:
     with open(REPORT_PATH) as f:
       last_report_datetime = f.readline().strip()
     last_report_expired = check_report_expired(last_report_datetime)

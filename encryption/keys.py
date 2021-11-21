@@ -1,12 +1,13 @@
 from Crypto.Util import number
 from Crypto.PublicKey import RSA
-#from system_stats import KEY_LENGTH
+from system_stats import KEY_LENGTH
 
 PUB_NAME = 'pubkey.pem'
 PRIV_NAME = 'privkey.pem'
+KEY = 4096
 
 def generate_prime():
-  return number.getPrime(56)
+  return number.getPrime(KEY_LENGTH)
 
 def get_key_path(path, username, public):
   name = PUB_NAME if public else PRIV_NAME
@@ -14,7 +15,7 @@ def get_key_path(path, username, public):
   return f'{path}/{filename}'
 
 def generate_key_pair(path, username=None):
-  key = RSA.generate(4096)
+  key = RSA.generate(KEY)
   pub_path = get_key_path(path, username, public=True)
   priv_path = get_key_path(path, username, public=False)
   with open(priv_path, 'wb+') as f: f.write(key.exportKey('PEM'))
